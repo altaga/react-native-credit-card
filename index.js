@@ -25,7 +25,7 @@ class CreditCard extends Component {
         super(props);
         this.state = {
             type: {
-                name:"unknown",
+                name:"unknown", 
                 length: 16
             }
         }
@@ -33,12 +33,10 @@ class CreditCard extends Component {
     getValue(name) {
         return this[name]();
     }
-    componentWillReceiveProps(nextProps) {
-        this.updateType(nextProps);
-    }
-    componentWillMount() {
+    componentDidMount() {
         this.updateType(this.props);
     }
+
     updateType(props) {
 
         if (!props.number)
@@ -52,7 +50,7 @@ class CreditCard extends Component {
                 return this.setState({type: {name: type, length: 16}});
             }
         }
-
+        
         return this.setState({type: {name: "unknown", length: 16}});
     }
     number() {
@@ -88,7 +86,7 @@ class CreditCard extends Component {
     }
     name() {
         if (this.props.name === "") {
-            return this.props.fullNameText.toUpperCase() || "FULL NAME";
+            return "FULL NAME";
         } else {
             return this.props.name.toUpperCase();
         }
@@ -128,15 +126,8 @@ class CreditCard extends Component {
     render() {
         const isAmex = this.state.type && this.state.type.name === "amex";
         const cardStyle = [styles.container, {width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor}, this.props.style];
-        const {
-            showExpiryAfterLabel = true,
-            showExpiryBeforeLabel = true,
-            expiryBeforeText,
-            expiryAfterText,
-        } = this.props;
-
         return (
-            <View style={cardStyle}>
+            <View style={styles.cardStyle}>
                 <FlipCard
                     style={[styles.container, {width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor}, this.props.style]}
                     friction={6}
@@ -144,7 +135,7 @@ class CreditCard extends Component {
                     flipHorizontal={true}
                     flipVertical={false}
                     flip={this.props.focused === 'cvc'}
-                    clickable={this.props.clickable}
+                    clickable={true}
                     onFlipped={(isFlipped)=>{console.log('isFlipped', isFlipped)}}
                     >
                     <View style={[styles.front, {width: this.props.width, height: this.props.height}]}>
@@ -159,7 +150,7 @@ class CreditCard extends Component {
                                  style={styles.logo}
                                  source={{uri: images[this.props.type ? this.props.type : this.state.type.name]}}
                             />
-                            {isAmex ?
+                            {isAmex ? 
                                 <View style={styles.cvcFront}>
                                     <Text style={styles.text}>{this.getValue("cvc")}</Text>
                                 </View>
@@ -168,18 +159,12 @@ class CreditCard extends Component {
                                 <View style={styles.number}><Text style={styles.textNumber}>{this.getValue("number")}</Text></View>
                                 <View style={styles.rowWrap}>
                                     <View style={styles.name}><Text style={styles.textName}>{this.getValue("name")}</Text></View>
-                                    {showExpiryAfterLabel &&
-                                        <View style={styles.validthru}>
-                                            <Text style={styles.textValidThru}>{expiryAfterText || 'VALID THRU'}</Text>
-                                        </View>
-                                    }
+                                    <View style={styles.validthru}><Text style={styles.textValidThru}>VALID THRU</Text></View>
                                     <View
                                         style={styles.expiry}
                                         data-before={this.props.expiryBefore}
                                         data-after={this.props.expiryAfter}>
-                                        {showExpiryBeforeLabel && 
-                                            <Text style={styles.textSmall}>{expiryBeforeText || 'MONTH/YEAR'}</Text>
-                                        }
+                                        <Text style={styles.textSmall}>MONTH/YEAR</Text>
                                         <Text style={styles.textExpiry}>{this.getValue("expiry")}</Text>
                                     </View>
                                 </View>
@@ -208,7 +193,7 @@ const styles = StyleSheet.create({
     container: {
         borderRadius: 8,
         borderWidth: 0,
-        flex: null,
+        flex: 1,
     },
     logo: {
         height: 35,
@@ -266,7 +251,7 @@ const styles = StyleSheet.create({
     },
     textNumber: {
         color: '#fff',
-        fontSize: 21,
+        fontSize: 22,
         textAlign: 'center',
         marginBottom: 10,
         backgroundColor: 'transparent',
@@ -345,10 +330,8 @@ CreditCard.defaultProps = {
     width: 300,
     height: 180,
     bgColor: '#191278',
-    clickable: true,
 };
 
 CreditCard.CardImages = images;
 
 module.exports = CreditCard;
-
